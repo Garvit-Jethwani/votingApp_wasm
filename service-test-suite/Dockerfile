@@ -5,11 +5,8 @@ LABEL maintainer="mgdevstack" \
 ADD main.go  .
 COPY common /usr/local/go/src/github.com/roost-io/roost-example/voting_app/service-test-suite/common
 COPY ballot /usr/local/go/src/github.com/roost-io/roost-example/voting_app/service-test-suite/ballot
-RUN GO111MODULE=off CGO_ENABLED=0 GOFLAGS=-mod=vendor  GOPATH=/usr/local/go/src/ GOARCH=amd64 GOOS=linux go build -o app
+RUN GO111MODULE=off CGO_ENABLED=0 GOFLAGS=-mod=vendor  GOPATH=/usr/local/go/src/ GOARCH=wasm GOOS=js go build -o app
 
-FROM alpine
-LABEL maintainer="mgdevstack" \
-    vendor="Zettabytes" \
-    owner="zbio"
-COPY --from=builder /go/app /app
-ENTRYPOINT ["/app"]
+FROM scratch
+COPY --from=build /build/hello_world.wasm /hello_world.wasm
+ENTRYPOINT [ "hello_world.wasm" ]
